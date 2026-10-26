@@ -16,7 +16,7 @@ public class CheckoutService {
         BigDecimal discountRate = BigDecimal.ZERO;
         if (subtotal.compareTo(ONE_MILLION) >= 0) {
             discountRate = new BigDecimal("0.10");
-        } else if (subtotal.compareTo(FIVE_HUNDRED_THOUSAND) >= 0) {
+        } else if (subtotal.compareTo(FIVE_HUNDRED_THOUSAND) > 0) {
             discountRate = new BigDecimal("0.05");
         }
 
