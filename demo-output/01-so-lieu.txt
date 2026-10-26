@@ -1,0 +1,29 @@
+Máy: Apple M4 | Java version: 21.0.10 | Apache Maven 3.10.0
+
+== Dòng mã test (bỏ dòng trống, package, import)
+junit-mockito: 52
+testng:        67
+spock:         58
+
+== Dòng cấu hình riêng của từng profile trong pom.xml
+junit-mockito: 14 dòng
+testng: 26 dòng
+spock: 48 dòng
+
+== Thư viện trên test classpath (kể cả phụ thuộc bắc cầu)
+junit-mockito: 12 jar, 7.5 MB
+testng: 8 jar, 7.4 MB
+spock: 8 jar, 10.0 MB
+
+== Thời gian (giây): toàn bộ 'mvn clean test' | riêng phần chạy test (Surefire)
+junit-mockito lần 1: 1.98 | 0.459
+junit-mockito lần 2: 1.78 | 0.438
+junit-mockito lần 3: 1.79 | 0.440
+testng lần 1: 1.98 | 0.557
+testng lần 2: 1.89 | 0.547
+testng lần 3: 2.05 | 0.556
+spock lần 1: 1.90 | 0.123
+spock lần 2: 1.87 | 0.127
+spock lần 3: 2.02 | 0.124
+
+Đã ghi vào demo-output/01-so-lieu.txt

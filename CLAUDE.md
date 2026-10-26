@@ -4,51 +4,57 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-A small Java 17 demo project for a software-testing course (CTU). It shows one checkout/discount rule tested three ways: JUnit 5, JUnit 5 + Mockito, and TestNG. User-facing messages, Javadoc and the README are in Vietnamese. Keep new strings in Vietnamese too.
+Code and demo for a CTU software-maintenance group assignment ("Bài tập nhóm số 1", topic *Công cụ hỗ trợ kiểm thử*). The task is to compare at least 3 tools of one category, pick one, and demo its maintenance-supporting features through a chain of scenarios. The group compares **JUnit 5, TestNG and Spock**, all running the same test suite against one small Java 17 checkout module. This repo holds only code, logs and data for the report. The group writes the Word report and slides themselves. User-facing strings, docs and Javadoc are in Vietnamese. Keep new ones in Vietnamese too.
 
 Business rule (VND, `BigDecimal`): below 500,000 there is no discount; from 500,000 the discount is 5%; from 1,000,000 it is 10%. The result is rounded `HALF_UP` to whole đồng (scale 0). A subtotal that is `null` or ≤ 0 throws `IllegalArgumentException`.
 
 ## Commands
 
-The README's commands are written for Windows (PowerShell, and VS Code's bundled `mvn.cmd`). On this macOS machine `mvn` is **not on PATH**, so Maven commands need Maven installed first. The smoke check only needs the JDK:
+Maven comes from Homebrew. The `mvn` wrapper from brew falls back to brew's own (newest) OpenJDK when `JAVA_HOME` is unset, so always run with JDK 21:
 
 ```bash
-# Smoke check, no external libraries (works with the system JDK)
-mkdir -p target/smoke
-javac -encoding UTF-8 -d target/smoke src/main/java/btp/*.java
-java -cp target/smoke btp.SmokeCheck
+export JAVA_HOME=$(/usr/libexec/java_home -v 21)
 
-# JUnit 5 + Mockito (default profile `junit-mockito`)
-mvn clean test
-mvn test -Dtest=CheckoutServiceTest#roundsFinalPriceToWholeVnd   # single test method
+mvn clean test              # JUnit 5 + Mockito (default profile `junit-mockito`)
+mvn -Ptestng clean test     # TestNG + Mockito
+mvn -Pspock clean test      # Spock (Groovy)
+mvn test -Dtest=CheckoutServiceJUnitTest#calculatesFinalPrice   # single test
+mvn -o ...                  # offline, once ~/.m2 is populated (use for live demos)
 
-# TestNG (profile `testng`)
-mvn -Ptestng clean test
-mvn -Ptestng test -Dtest=CheckoutServiceTestNgTest
+bash demo/do-so-lieu.sh     # re-measure comparison metrics -> demo-output/01-so-lieu.txt
+
+# Dependency-free smoke check
+mkdir -p target/smoke && javac -encoding UTF-8 -d target/smoke src/main/java/btp/*.java && java -cp target/smoke btp.SmokeCheck
 ```
 
-`clean` deletes `target/surefire-reports`. The course report needs the logs from both runs, so save the first run's results before you start the second.
+`clean` deletes `target/surefire-reports`, so logs worth keeping go in `demo-output/` (tracked in git).
 
 ## Architecture
 
 - `CheckoutService`: pure pricing logic (`finalPrice`).
-- `CheckoutApplicationService`: checks that `orderId` is not blank, calls `CheckoutService`, then saves the result through `OrderRepository`.
-- `OrderRepository`: an interface with **no implementation**. Tests only ever use it as a Mockito mock.
-- `SmokeCheck`: a `main`-based check with no dependencies, which the README uses for live demos.
+- `CheckoutApplicationService`: checks that `orderId` is not blank, calls `CheckoutService`, then saves through `OrderRepository`.
+- `OrderRepository`: an interface with **no implementation**. Tests only ever mock it (Mockito, or Spock's `Mock()`).
+- `docs/test-cases.md` is the source of truth for the shared cases TC01–TC16 (18 executions). **All three tools must implement exactly the same cases.** A change to one tool's tests must be mirrored in the other two, and the mapping table in that doc must be updated.
+- `docs/so-sanh-cong-cu.md` holds the measured comparison and the weighted scoring that leads to the recommendation of JUnit + Mockito.
 
-## Two mutually exclusive test profiles
+## Three mutually exclusive test profiles
 
-JUnit/Mockito and TestNG dependencies are never on the classpath at the same time, so `pom.xml` uses `maven-compiler-plugin` `testExcludes` to stop each profile from compiling the other framework's tests:
+The three frameworks are never on the classpath together. Profiles isolate them by **file-name convention**, using `maven-compiler-plugin` `testExcludes` and Surefire `includes`:
 
-- The base build config excludes `CheckoutServiceTestNgTest.java`. This applies to the default `junit-mockito` profile.
-- The `testng` profile replaces that list (`combine.self="override"`) and excludes the JUnit test files instead.
+| Profile | Test files | Excludes |
+|---|---|---|
+| `junit-mockito` (default) | `src/test/java/**/*JUnitTest.java` | base config excludes `*TestNgTest.java` |
+| `testng` | `src/test/java/**/*TestNgTest.java` | overrides to exclude `*JUnitTest.java` |
+| `spock` | `src/test/groovy/**/*Spec.groovy` (compiled by GMavenPlus) | excludes all `*.java` tests; Surefire includes `*Spec` |
 
-**When you add a test file**, add it to the exclude list of the profile it does *not* belong to, or that profile's build will fail to compile. Surefire only picks up files named `*Test.java`.
+Follow the naming convention and new test files need no POM edits. A file that matches no convention compiles in the default profile and breaks it.
 
 ## Gotchas
 
-- `assertEquals` on `BigDecimal` and Mockito's `verify(...).save(..., value)` both use `equals`, which is **scale-sensitive**. Expected values must have scale 0 (`new BigDecimal("900000")`, not `"900000.00"`). `SmokeCheck` uses `compareTo` instead.
-- `target/surefire-reports` currently holds stale `GradeServiceTest` / `GradeReportServiceTest` reports copied from another project. They are not this project's results.
-- `.idea/misc.xml` sets the language level to JDK 1.8, but the POM requires `release 17`.
-- `.github/modernize/` contains hook scripts from a VS Code Java-upgrade extension. They are not part of the build.
-- The README mentions a `deliverables/` folder (the Word report and slides). It is not in this directory.
+- `BigDecimal` equality is **scale-sensitive** in JUnit/TestNG `assertEquals` and in Mockito `verify` (expected values must be `new BigDecimal("900000")`, not `"900000.00"`). It is **not** scale-sensitive in Spock, because Groovy `==` uses `compareTo`.
+- Surefire counts Spock data-driven feature containers as extra tests: the suite reports 21, but only 18 real executions happen.
+- With Surefire's default reporters, JUnit `@DisplayName` and `@ParameterizedTest(name=…)` names are not shown (failures show `[4]` instead of `TC07`).
+- Mockito prints "self-attaching" / dynamic-agent warnings on JDK 21. These are expected, not failures.
+- Branch `loi-nguong-500k` contains a **deliberate** bug (`>` instead of `>=` at 500,000) for demoing failure messages. Never merge it into `main`.
+- Git tags mark the phases: `gd0-baseline`, `gd1-comparison`, … Later maintenance scenarios use `kbN-truoc` / `kbN-sau` tag pairs.
+- The README still describes the old Windows/PowerShell workflow (to be rewritten for macOS in the demo-packaging phase). `.github/modernize/` is VS Code Java-upgrade extension residue. `.idea` says JDK 1.8 but the POM requires release 17.
