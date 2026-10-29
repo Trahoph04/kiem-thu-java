@@ -63,6 +63,14 @@ class CheckoutApplicationServiceJUnitTest {
     }
 
     @Test
+    @DisplayName("TC28 (BUG-01): bỏ khoảng trắng đầu/cuối của mã đơn trước khi lưu")
+    void savesOrderIdWithoutSurroundingSpaces() {
+        application.checkout("  ORD-003  ", new BigDecimal("300000"));
+
+        verify(repository).save("ORD-003", new BigDecimal("300000"));
+    }
+
+    @Test
     @DisplayName("TC16: từ chối giá 0 đ, không lưu đơn")
     void rejectsInvalidSubtotalWithoutSaving() {
         assertThrows(IllegalArgumentException.class,
