@@ -15,6 +15,7 @@
         <spock.version>2.5-groovy-5.0</spock.version>
         <groovy.version>5.1.3</groovy.version>
         <gmavenplus.version>5.1.0</gmavenplus.version>
+        <jacoco.version>0.8.16</jacoco.version>
     </properties>
     <build>
         <plugins>
@@ -41,6 +42,10 @@
         <profile>
             <id>junit-mockito</id>
             <activation><activeByDefault>true</activeByDefault></activation>
+            <properties>
+                <!-- JaCoCo ghi đè argLine khi chạy; để trống thì @{argLine} vẫn hợp lệ khi bỏ qua JaCoCo -->
+                <argLine></argLine>
+            </properties>
             <dependencies>
                 <dependency>
                     <groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter</artifactId>
@@ -50,7 +55,61 @@
                     <groupId>org.mockito</groupId><artifactId>mockito-core</artifactId>
                     <version>${mockito.version}</version><scope>test</scope>
                 </dependency>
+                <dependency>
+                    <groupId>org.mockito</groupId><artifactId>mockito-junit-jupiter</artifactId>
+                    <version>${mockito.version}</version><scope>test</scope>
+                </dependency>
             </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId><artifactId>maven-dependency-plugin</artifactId>
+                        <version>3.8.1</version>
+                        <executions>
+                            <execution>
+                                <goals><goal>properties</goal></goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.jacoco</groupId><artifactId>jacoco-maven-plugin</artifactId>
+                        <version>${jacoco.version}</version>
+                        <configuration>
+                            <!-- SmokeCheck là chương trình kiểm tra thủ công, không phải mã nghiệp vụ -->
+                            <excludes><exclude>btp/SmokeCheck.class</exclude></excludes>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>prepare-agent</id>
+                                <goals><goal>prepare-agent</goal></goals>
+                            </execution>
+                            <execution>
+                                <id>report</id>
+                                <phase>test</phase>
+                                <goals><goal>report</goal></goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId><artifactId>maven-surefire-plugin</artifactId>
+                        <version>3.5.2</version>
+                        <configuration>
+                            <!-- Nạp Mockito làm agent từ đầu thay vì để nó tự gắn lúc chạy (hết cảnh báo trên JDK 21+) -->
+                            <argLine>@{argLine} -javaagent:${org.mockito:mockito-core:jar}</argLine>
+                            <!-- Hiện @DisplayName / tên ca tham số hóa trong console và báo cáo XML -->
+                            <statelessTestsetReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5Xml30StatelessReporter">
+                                <usePhrasedTestCaseClassName>true</usePhrasedTestCaseClassName>
+                                <usePhrasedTestCaseMethodName>true</usePhrasedTestCaseMethodName>
+                            </statelessTestsetReporter>
+                            <consoleOutputReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5ConsoleOutputReporter"/>
+                            <statelessTestsetInfoReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoReporter">
+                                <usePhrasedClassNameInRunning>true</usePhrasedClassNameInRunning>
+                                <usePhrasedClassNameInTestCaseSummary>true</usePhrasedClassNameInTestCaseSummary>
+                            </statelessTestsetInfoReporter>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
         <profile>
             <id>testng</id>

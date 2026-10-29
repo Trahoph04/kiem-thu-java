@@ -1,0 +1,44 @@
+╷
+└─ JUnit Jupiter ✔
+   ├─ CheckoutService – tính giá thanh toán ✔
+   │  ├─ V1–V3 – bậc giảm giá và làm tròn ✔
+   │  │  └─ TC04–TC13: dữ liệu từ bang-gia.csv ✔
+   │  │     ├─ TC04: 1 đ → 1 đ ✔
+   │  │     ├─ TC05: 300000 đ → 300000 đ ✔
+   │  │     ├─ TC06: 499999 đ → 499999 đ ✔
+   │  │     ├─ TC07: 500000 đ → 475000 đ ✔
+   │  │     ├─ TC08: 750000 đ → 712500 đ ✔
+   │  │     ├─ TC09: 999999 đ → 949999 đ ✔
+   │  │     ├─ TC10: 1000000 đ → 900000 đ ✔
+   │  │     ├─ TC11: 2000000 đ → 1800000 đ ✔
+   │  │     ├─ TC12: 500010 đ → 475010 đ ✔
+   │  │     └─ TC13: 1000005 đ → 900005 đ ✔
+   │  ├─ Hiệu năng ✔
+   │  │  └─ HN01: tính 100.000 đơn trong dưới 1 giây ✔
+   │  └─ V0 – giá không hợp lệ ✔
+   │     └─ TC01–TC03: ném IllegalArgumentException ✔
+   │        ├─ TC01: từ chối giá null ✔
+   │        ├─ TC02: từ chối giá -1 ✔
+   │        └─ TC03: từ chối giá 0 ✔
+   └─ CheckoutApplicationService – thanh toán và lưu đơn ✔
+      ├─ TC16: từ chối giá 0 đ, không lưu đơn ✔
+      ├─ TC15: mã đơn trống ✔
+      │  ├─ TC15: từ chối mã đơn null, không lưu đơn ✔
+      │  ├─ TC15: từ chối mã đơn "", không lưu đơn ✔
+      │  └─ TC15: từ chối mã đơn "   ", không lưu đơn ✔
+      └─ TC14: lưu đơn ORD-001 với tổng tiền 900.000 đ ✔
+
+Test run finished after 280 ms
+[         9 containers found      ]
+[         0 containers skipped    ]
+[         9 containers started    ]
+[         0 containers aborted    ]
+[         9 containers successful ]
+[         0 containers failed     ]
+[        19 tests found           ]
+[         0 tests skipped         ]
+[        19 tests started         ]
+[         0 tests aborted         ]
+[        19 tests successful      ]
+[         0 tests failed          ]
+

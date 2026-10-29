@@ -22,6 +22,8 @@ mvn test -Dtest=CheckoutServiceJUnitTest#calculatesFinalPrice   # single test
 mvn -o ...                  # offline, once ~/.m2 is populated (use for live demos)
 
 bash demo/do-so-lieu.sh     # re-measure comparison metrics -> demo-output/01-so-lieu.txt
+bash demo/cay-ket-qua.sh    # JUnit results as a tree via Console Launcher (args pass through, e.g. --include-tag luu-don)
+mvn test -Dgroups=luu-don   # JUnit tags: tinh-gia, luu-don, hieu-nang
 
 # Dependency-free smoke check
 mkdir -p target/smoke && javac -encoding UTF-8 -d target/smoke src/main/java/btp/*.java && java -cp target/smoke btp.SmokeCheck
@@ -36,6 +38,8 @@ mkdir -p target/smoke && javac -encoding UTF-8 -d target/smoke src/main/java/btp
 - `OrderRepository`: an interface with **no implementation**. Tests only ever mock it (Mockito, or Spock's `Mock()`).
 - `docs/test-cases.md` is the source of truth for the shared cases TC01–TC16 (18 executions). **All three tools must implement exactly the same cases.** A change to one tool's tests must be mirrored in the other two, and the mapping table in that doc must be updated.
 - `docs/so-sanh-cong-cu.md` holds the measured comparison and the weighted scoring that leads to the recommendation of JUnit + Mockito.
+- After tag `gd1-comparison` (pinned for the measurements), only the **JUnit** suite evolves. It showcases features listed in `docs/tinh-nang-junit.md`: `@Nested`, `@CsvFileSource` (TC04–TC13 data live in `src/test/resources/bang-gia.csv`), `@Tag`, `@Timeout`, and `MockitoExtension` with `@Spy`/`@InjectMocks`/`@Captor`. TestNG/Spock suites stay as the comparison baseline. Maintenance-scenario tests (TC17+) are JUnit-only.
+- The `junit-mockito` profile also wires JaCoCo (report bound to `test` phase, `SmokeCheck` excluded), Mockito as `-javaagent` via `maven-dependency-plugin:properties` + `@{argLine}`, and Surefire's JUnit 5 reporters so display names appear in XML/console.
 
 ## Three mutually exclusive test profiles
 
@@ -53,8 +57,9 @@ Follow the naming convention and new test files need no POM edits. A file that m
 
 - `BigDecimal` equality is **scale-sensitive** in JUnit/TestNG `assertEquals` and in Mockito `verify` (expected values must be `new BigDecimal("900000")`, not `"900000.00"`). It is **not** scale-sensitive in Spock, because Groovy `==` uses `compareTo`.
 - Surefire counts Spock data-driven feature containers as extra tests: the suite reports 21, but only 18 real executions happen.
-- With Surefire's default reporters, JUnit `@DisplayName` and `@ParameterizedTest(name=…)` names are not shown (failures show `[4]` instead of `TC07`).
-- Mockito prints "self-attaching" / dynamic-agent warnings on JDK 21. These are expected, not failures.
+- Even with the JUnit 5 reporters, Surefire's console `<<< FAILURE!` line still shows `[4]`. That is why JUnit assertion messages are prefixed with the case id. JUnit 6 quotes text arguments in display names unless `quoteTextArguments = false`.
+- In the `testng` profile Mockito still prints "self-attaching" warnings (only the JUnit profile loads it as an agent). These are expected, not failures.
+- Don't copy `target/site/jacoco` numbers after a `-Dtest=` run: coverage then reflects only the selected tests.
 - Branch `loi-nguong-500k` contains a **deliberate** bug (`>` instead of `>=` at 500,000) for demoing failure messages. Never merge it into `main`.
 - Git tags mark the phases: `gd0-baseline`, `gd1-comparison`, … Later maintenance scenarios use `kbN-truoc` / `kbN-sau` tag pairs.
 - The README still describes the old Windows/PowerShell workflow (to be rewritten for macOS in the demo-packaging phase). `.github/modernize/` is VS Code Java-upgrade extension residue. `.idea` says JDK 1.8 but the POM requires release 17.

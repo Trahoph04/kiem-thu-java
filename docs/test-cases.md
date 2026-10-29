@@ -45,8 +45,18 @@ Tổng cộng có **16 ca và 18 lần thực thi**, vì TC15 chạy với 3 gi�
 
 | Mã | JUnit (`*JUnitTest.java`) | TestNG (`*TestNgTest.java`) | Spock (`*Spec.groovy`) |
 |---|---|---|---|
-| TC01–03 | `CheckoutServiceJUnitTest.rejectsInvalidSubtotal` | `CheckoutServiceTestNgTest.rejectsInvalidSubtotal` | `CheckoutServiceSpec` – "#id: từ chối giá #subtotal" |
-| TC04–13 | `CheckoutServiceJUnitTest.calculatesFinalPrice` | `CheckoutServiceTestNgTest.calculatesFinalPrice` | `CheckoutServiceSpec` – "#id: #subtotal đ → #expected đ" |
+| TC01–03 | `CheckoutServiceJUnitTest$InvalidSubtotal.rejectsInvalidSubtotal` | `CheckoutServiceTestNgTest.rejectsInvalidSubtotal` | `CheckoutServiceSpec` – "#id: từ chối giá #subtotal" |
+| TC04–13 | `CheckoutServiceJUnitTest$DiscountTiers.calculatesFinalPrice` (dữ liệu: `src/test/resources/bang-gia.csv`) | `CheckoutServiceTestNgTest.calculatesFinalPrice` | `CheckoutServiceSpec` – "#id: #subtotal đ → #expected đ" |
 | TC14 | `CheckoutApplicationServiceJUnitTest.savesOrderWithFinalPrice` | `CheckoutApplicationServiceTestNgTest.savesOrderWithFinalPrice` | `CheckoutApplicationServiceSpec` – "TC14: …" |
 | TC15 | `CheckoutApplicationServiceJUnitTest.rejectsBlankOrderIdWithoutSaving` | `CheckoutApplicationServiceTestNgTest.rejectsBlankOrderIdWithoutSaving` | `CheckoutApplicationServiceSpec` – "TC15: …" |
 | TC16 | `CheckoutApplicationServiceJUnitTest.rejectsInvalidSubtotalWithoutSaving` | `CheckoutApplicationServiceTestNgTest.rejectsInvalidSubtotalWithoutSaving` | `CheckoutApplicationServiceSpec` – "TC16: …" |
+
+Từ tag `gd2-features`, bộ JUnit (công cụ được chọn) được tổ chức lại để dùng các tính năng sâu của công cụ: `@Nested`, `@CsvFileSource`, `MockitoExtension`, … Nội dung 16 ca vẫn giữ nguyên. Tag `gd1-comparison` vẫn giữ bản đã dùng để đo so sánh.
+
+## 5. Ca bổ sung chỉ cho JUnit (sau khi chọn công cụ)
+
+| Mã | Đầu vào | Kết quả mong đợi | Mục đích |
+|---|---|---|---|
+| HN01 | 100.000 lần `finalPrice` (10 đ … 1.000.000 đ) | Xong trong dưới 1 giây (`@Timeout(1)`) | Chặn hồi quy hiệu năng |
+
+Các ca bổ sung trong chuỗi kịch bản bảo trì (TC17 trở đi) được ghi ở [kich-ban-bao-tri.md](kich-ban-bao-tri.md).
