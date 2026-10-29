@@ -59,4 +59,15 @@ Từ tag `gd2-features`, bộ JUnit (công cụ được chọn) được tổ c
 |---|---|---|---|
 | HN01 | 100.000 lần `finalPrice` (10 đ … 1.000.000 đ) | Xong trong dưới 1 giây (`@Timeout(1)`) | Chặn hồi quy hiệu năng |
 
-Các ca bổ sung trong chuỗi kịch bản bảo trì (TC17 trở đi) được ghi ở [kich-ban-bao-tri.md](kich-ban-bao-tri.md).
+## 6. Ca bổ sung trong chuỗi kịch bản bảo trì (chỉ JUnit)
+
+Chi tiết ở [kich-ban-bao-tri.md](kich-ban-bao-tri.md).
+
+| Mã | Kịch bản | Đầu vào | Kết quả mong đợi |
+|---|---|---|---|
+| TC17–TC25 | KB3 – VIP | 9 mức giá trong `src/test/resources/bang-gia-vip.csv` | Giảm 2% / 7% / 12%, làm tròn `HALF_UP` |
+| TC26 | KB3 – VIP | `finalPrice(0, vip = true)` | `IllegalArgumentException` |
+| TC27 | KB3 – VIP | `checkout("ORD-VIP", 1.000.000, vip = true)` | Trả về 880.000; `save("ORD-VIP", 880000)` |
+| TC28 | KB5 – BUG-01 | `checkout("  ORD-003  ", 300.000)` | `save("ORD-003", 300000)`, đã bỏ khoảng trắng |
+
+Ở `main` hiện có **31 lần thực thi** JUnit: 18 (TC01–TC16) + HN01 + 9 (TC17–TC25) + TC26 + TC27 + TC28.
