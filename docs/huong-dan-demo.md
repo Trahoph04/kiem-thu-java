@@ -29,8 +29,9 @@ Thông báo lỗi khi gặp cùng một lỗi biên. Log có sẵn: `demo-output
 
 ```bash
 git switch -q loi-nguong-500k
-mvn -o -Ptestng clean test | grep -A1 "Failures:" | tail -1
-mvn -o -Pspock  clean test | sed -n '/Failures:/,/false/p'
+mvn -o clean test         | grep -E "^\[ERROR\]   .*expected"                        # JUnit: chỉ có [4]
+mvn -o -Ptestng clean test | grep -E "<<< FAILURE!$|^\[ERROR\]   .*expected" | grep -v TestSuite   # TestNG: in tham số
+mvn -o -Pspock  clean test | grep -m1 -A6 "TC07: 500000.*FAILURE"                     # Spock: power assertion
 git switch -q main
 ```
 

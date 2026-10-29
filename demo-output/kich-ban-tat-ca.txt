@@ -1,0 +1,247 @@
+
+══ KB1 – Bảo trì phòng ngừa: tìm phần mã chưa có lưới an toàn ══
+
+▶ [kb1-truoc] Đo độ phủ bộ test GỐC bằng JaCoCo (gọi từ dòng lệnh)
+  $ mvn clean org.jacoco:jacoco-maven-plugin:0.8.16:prepare-agent test org.jacoco:jacoco-maven-plugin:0.8.16:report   (JDK 21.0.10)
+  Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
+  BUILD SUCCESS
+  log: target/demo-logs/kb1-truoc-081846.log
+  CheckoutApplicationService   nhánh 2/4   dòng 8/9
+  CheckoutService              nhánh 7/8   dòng 12/12
+  TỔNG                       nhánh 75.0%   dòng 95.2%
+
+▶ [kb1-sau] Sau khi bổ sung TC01/TC15 và đặt cổng jacoco:check 100%
+  $ mvn clean verify   (JDK 21.0.10)
+  Tests run: 19, Failures: 0, Errors: 0, Skipped: 0
+  All coverage checks have been met.
+  BUILD SUCCESS
+  log: target/demo-logs/kb1-sau-081848.log
+  CheckoutApplicationService   nhánh 4/4   dòng 9/9
+  CheckoutService              nhánh 8/8   dòng 12/12
+  TỔNG                       nhánh 100.0%   dòng 100.0%
+
+▶ [kb1-sau] Cổng chặn: chỉ chạy test tính giá thì độ phủ không đạt
+  $ mvn clean verify -Dtest=CheckoutServiceJUnitTest*   (JDK 21.0.10)
+  Tests run: 14, Failures: 0, Errors: 0, Skipped: 0
+  Rule violated for bundle kiem-thu-java: lines covered ratio is 0.57, but expected minimum is 1.00
+  Rule violated for bundle kiem-thu-java: branches covered ratio is 0.66, but expected minimum is 1.00
+  BUILD FAILURE
+  log: target/demo-logs/kb1-sau-081851.log
+
+══ KB2 – Bảo trì thích nghi: JDK tương lai cấm nạp agent động (JEP 451) ══
+
+▶ [kb2-truoc] Mockito tự gắn agent lúc chạy + giả lập JDK cấm agent động
+  $ mvn clean test -DargLine=-XX:-EnableDynamicAgentLoading   (JDK 21.0.10)
+  Tests run: 18, Failures: 0, Errors: 5, Skipped: 0
+  ✘ CheckoutApplicationServiceJUnitTest.<init>:13 » IllegalState Could not initialize plugin: interface org.mockito.plugins.MockMaker (alternate: null)
+  BUILD FAILURE
+  log: target/demo-logs/kb2-truoc-081853.log
+
+▶ [kb2-sau] Mockito nạp bằng -javaagent khi khởi động + cùng cờ cấm
+  $ mvn clean test -DargLine=-XX:-EnableDynamicAgentLoading   (JDK 21.0.10)
+  Tests run: 19, Failures: 0, Errors: 0, Skipped: 0
+  BUILD SUCCESS
+  log: target/demo-logs/kb2-sau-081855.log
+
+▶ [kb2-sau] Chạy lại toàn bộ trên JDK mới
+  $ mvn clean test   (JDK 25.0.2)
+  Tests run: 19, Failures: 0, Errors: 0, Skipped: 0
+  BUILD SUCCESS
+  log: target/demo-logs/kb2-sau-081858.log
+
+▶ [kb2-sau] Chạy lại toàn bộ trên JDK mới
+  $ mvn clean test   (JDK 27.0.1.0.3)
+  Tests run: 19, Failures: 0, Errors: 0, Skipped: 0
+  BUILD SUCCESS
+  log: target/demo-logs/kb2-sau-081900.log
+
+══ KB3 – Bảo trì hoàn thiện: thêm chính sách khách VIP (viết test trước) ══
+
+▶ [kb3-truoc] Đã có test TC17–TC27, mới có khung phương thức
+  $ mvn clean verify   (JDK 21.0.10)
+  Tests run: 30, Failures: 9, Errors: 0, Skipped: 0
+  ✘ CheckoutApplicationServiceJUnitTest.savesVipOrderWithVipPrice:61 expected: <880000> but was: <900000>
+  ✘ CheckoutServiceJUnitTest$VipCustomer.calculatesVipPrice:55 TC18: sai thành tiền VIP ==> expected: <294000> but was: <300000>
+  ✘ CheckoutServiceJUnitTest$VipCustomer.calculatesVipPrice:55 TC19: sai thành tiền VIP ==> expected: <489999> but was: <499999>
+  ✘ CheckoutServiceJUnitTest$VipCustomer.calculatesVipPrice:55 TC20: sai thành tiền VIP ==> expected: <465000> but was: <475000>
+  ✘ CheckoutServiceJUnitTest$VipCustomer.calculatesVipPrice:55 TC21: sai thành tiền VIP ==> expected: <929999> but was: <949999>
+  ✘ CheckoutServiceJUnitTest$VipCustomer.calculatesVipPrice:55 TC22: sai thành tiền VIP ==> expected: <880000> but was: <900000>
+  ✘ CheckoutServiceJUnitTest$VipCustomer.calculatesVipPrice:55 TC23: sai thành tiền VIP ==> expected: <1760000> but was: <1800000>
+  ✘ CheckoutServiceJUnitTest$VipCustomer.calculatesVipPrice:55 TC24: sai thành tiền VIP ==> expected: <465047> but was: <475048>
+  ✘ CheckoutServiceJUnitTest$VipCustomer.calculatesVipPrice:55 TC25: sai thành tiền VIP ==> expected: <294025> but was: <300025>
+  BUILD FAILURE
+  log: target/demo-logs/kb3-truoc-081903.log
+  $ git diff kb3-truoc kb3-sau -- src/main
+  diff --git a/src/main/java/btp/CheckoutApplicationService.java b/src/main/java/btp/CheckoutApplicationService.java
+  index d82ee24..74ffbb1 100644
+  --- a/src/main/java/btp/CheckoutApplicationService.java
+  +++ b/src/main/java/btp/CheckoutApplicationService.java
+  @@ -19,7 +19,7 @@ public class CheckoutApplicationService {
+           if (orderId == null || orderId.isBlank()) {
+               throw new IllegalArgumentException("Mã đơn hàng không được để trống");
+           }
+  -        BigDecimal finalPrice = checkoutService.finalPrice(subtotal);
+  +        BigDecimal finalPrice = checkoutService.finalPrice(subtotal, vip);
+           repository.save(orderId, finalPrice);
+           return finalPrice;
+       }
+  diff --git a/src/main/java/btp/CheckoutService.java b/src/main/java/btp/CheckoutService.java
+  index 4038d51..2064655 100644
+  --- a/src/main/java/btp/CheckoutService.java
+  +++ b/src/main/java/btp/CheckoutService.java
+  @@ -7,6 +7,7 @@ import java.math.RoundingMode;
+   public class CheckoutService {
+       private static final BigDecimal FIVE_HUNDRED_THOUSAND = new BigDecimal("500000");
+       private static final BigDecimal ONE_MILLION = new BigDecimal("1000000");
+  +    private static final BigDecimal VIP_BONUS = new BigDecimal("0.02");
+   
+       public BigDecimal finalPrice(BigDecimal subtotal) {
+           return finalPrice(subtotal, false);
+  @@ -24,6 +25,9 @@ public class CheckoutService {
+           } else if (subtotal.compareTo(FIVE_HUNDRED_THOUSAND) >= 0) {
+               discountRate = new BigDecimal("0.05");
+           }
+  +        if (vip) {
+  +            discountRate = discountRate.add(VIP_BONUS);
+  +        }
+   
+           return subtotal.multiply(BigDecimal.ONE.subtract(discountRate))
+                   .setScale(0, RoundingMode.HALF_UP);
+
+▶ [kb3-sau] Đã cài đặt giảm thêm 2% cho VIP
+  $ mvn clean verify   (JDK 21.0.10)
+  Tests run: 30, Failures: 0, Errors: 0, Skipped: 0
+  All coverage checks have been met.
+  BUILD SUCCESS
+  log: target/demo-logs/kb3-sau-081905.log
+
+══ KB4 – Bảo trì hoàn thiện: tái cấu trúc bậc giảm giá thành bảng tra ══
+  $ git diff kb4-truoc kb4-loi -- src/main
+  diff --git a/src/main/java/btp/CheckoutService.java b/src/main/java/btp/CheckoutService.java
+  index 2064655..1fa8a6b 100644
+  --- a/src/main/java/btp/CheckoutService.java
+  +++ b/src/main/java/btp/CheckoutService.java
+  @@ -2,11 +2,17 @@ package btp;
+   
+   import java.math.BigDecimal;
+   import java.math.RoundingMode;
+  +import java.util.Map;
+  +import java.util.NavigableMap;
+  +import java.util.TreeMap;
+   
+   /** Tính giá thanh toán theo chính sách giảm giá minh họa của cửa hàng. */
+   public class CheckoutService {
+  -    private static final BigDecimal FIVE_HUNDRED_THOUSAND = new BigDecimal("500000");
+  -    private static final BigDecimal ONE_MILLION = new BigDecimal("1000000");
+  +    /** Ngưỡng tổng tiền (đ) → tỉ lệ giảm. Thêm bậc mới chỉ cần thêm một dòng. */
+  +    private static final NavigableMap<BigDecimal, BigDecimal> DISCOUNT_TIERS = new TreeMap<>(Map.of(
+  +            BigDecimal.ZERO, BigDecimal.ZERO,
+  +            new BigDecimal("500000"), new BigDecimal("0.05"),
+  +            new BigDecimal("1000000"), new BigDecimal("0.10")));
+       private static final BigDecimal VIP_BONUS = new BigDecimal("0.02");
+   
+       public BigDecimal finalPrice(BigDecimal subtotal) {
+  @@ -19,12 +25,7 @@ public class CheckoutService {
+               throw new IllegalArgumentException("Giá trị đơn hàng phải lớn hơn 0");
+           }
+   
+  -        BigDecimal discountRate = BigDecimal.ZERO;
+  -        if (subtotal.compareTo(ONE_MILLION) >= 0) {
+  -            discountRate = new BigDecimal("0.10");
+  -        } else if (subtotal.compareTo(FIVE_HUNDRED_THOUSAND) >= 0) {
+  -            discountRate = new BigDecimal("0.05");
+  -        }
+  +        BigDecimal discountRate = DISCOUNT_TIERS.lowerEntry(subtotal).getValue();
+           if (vip) {
+               discountRate = discountRate.add(VIP_BONUS);
+           }
+
+▶ [kb4-loi] Tái cấu trúc dùng nhầm lowerEntry
+  $ mvn clean verify   (JDK 21.0.10)
+  Tests run: 30, Failures: 6, Errors: 0, Skipped: 0
+  ✘ CheckoutApplicationServiceJUnitTest.savesOrderWithFinalPrice:36 (assertAll)
+      ↳ expected: <900000> but was: <950000>
+  ✘ CheckoutApplicationServiceJUnitTest.savesVipOrderWithVipPrice:61 expected: <880000> but was: <930000>
+  ✘ CheckoutServiceJUnitTest$DiscountTiers.calculatesFinalPrice:40 (assertAll)
+      ↳ TC07: sai thành tiền ==> expected: <475000> but was: <500000>
+      ↳ TC10: sai thành tiền ==> expected: <900000> but was: <950000>
+  ✘ CheckoutServiceJUnitTest$VipCustomer.calculatesVipPrice:55 TC20: sai thành tiền VIP ==> expected: <465000> but was: <490000>
+  ✘ CheckoutServiceJUnitTest$VipCustomer.calculatesVipPrice:55 TC22: sai thành tiền VIP ==> expected: <880000> but was: <930000>
+  BUILD FAILURE
+  log: target/demo-logs/kb4-loi-081908.log
+
+▶ [kb4-loi] Cùng mã lỗi nhưng bỏ qua test đỏ: độ phủ VẪN đạt 100%
+  $ mvn clean verify -Dmaven.test.failure.ignore=true   (JDK 21.0.10)
+  Tests run: 30, Failures: 6, Errors: 0, Skipped: 0
+  ✘ CheckoutApplicationServiceJUnitTest.savesOrderWithFinalPrice:36 (assertAll)
+      ↳ expected: <900000> but was: <950000>
+  ✘ CheckoutApplicationServiceJUnitTest.savesVipOrderWithVipPrice:61 expected: <880000> but was: <930000>
+  ✘ CheckoutServiceJUnitTest$DiscountTiers.calculatesFinalPrice:40 (assertAll)
+      ↳ TC07: sai thành tiền ==> expected: <475000> but was: <500000>
+      ↳ TC10: sai thành tiền ==> expected: <900000> but was: <950000>
+  ✘ CheckoutServiceJUnitTest$VipCustomer.calculatesVipPrice:55 TC20: sai thành tiền VIP ==> expected: <465000> but was: <490000>
+  ✘ CheckoutServiceJUnitTest$VipCustomer.calculatesVipPrice:55 TC22: sai thành tiền VIP ==> expected: <880000> but was: <930000>
+  All coverage checks have been met.
+  BUILD SUCCESS
+  log: target/demo-logs/kb4-loi-081911.log
+  $ git diff kb4-loi kb4-sau -- src/main
+  diff --git a/src/main/java/btp/CheckoutService.java b/src/main/java/btp/CheckoutService.java
+  index 1fa8a6b..713d009 100644
+  --- a/src/main/java/btp/CheckoutService.java
+  +++ b/src/main/java/btp/CheckoutService.java
+  @@ -25,7 +25,7 @@ public class CheckoutService {
+               throw new IllegalArgumentException("Giá trị đơn hàng phải lớn hơn 0");
+           }
+   
+  -        BigDecimal discountRate = DISCOUNT_TIERS.lowerEntry(subtotal).getValue();
+  +        BigDecimal discountRate = DISCOUNT_TIERS.floorEntry(subtotal).getValue();
+           if (vip) {
+               discountRate = discountRate.add(VIP_BONUS);
+           }
+
+▶ [kb4-sau] Sửa thành floorEntry, bộ test không đổi dòng nào
+  $ mvn clean verify   (JDK 21.0.10)
+  Tests run: 30, Failures: 0, Errors: 0, Skipped: 0
+  All coverage checks have been met.
+  BUILD SUCCESS
+  log: target/demo-logs/kb4-sau-081914.log
+
+══ KB5 – Bảo trì sửa lỗi: BUG-01 mã đơn lưu kèm khoảng trắng ══
+
+▶ [kb5-truoc] Chạy riêng TC28 tái hiện lỗi
+  $ mvn clean test -Dtest=CheckoutApplicationServiceJUnitTest#savesOrderIdWithoutSurroundingSpaces   (JDK 21.0.10)
+  Tests run: 1, Failures: 1, Errors: 0, Skipped: 0
+  ✘ CheckoutApplicationServiceJUnitTest.savesOrderIdWithoutSurroundingSpaces:70
+    Argument(s) are different! Wanted:
+    repository.save("ORD-003", 300000);
+    Actual invocations have different arguments at position [0]:
+    repository.save("  ORD-003  ", 300000);
+  BUILD FAILURE
+  log: target/demo-logs/kb5-truoc-081916.log
+  $ git diff kb5-truoc kb5-sau -- src/main
+  diff --git a/src/main/java/btp/CheckoutApplicationService.java b/src/main/java/btp/CheckoutApplicationService.java
+  index 74ffbb1..bfb3888 100644
+  --- a/src/main/java/btp/CheckoutApplicationService.java
+  +++ b/src/main/java/btp/CheckoutApplicationService.java
+  @@ -20,7 +20,7 @@ public class CheckoutApplicationService {
+               throw new IllegalArgumentException("Mã đơn hàng không được để trống");
+           }
+           BigDecimal finalPrice = checkoutService.finalPrice(subtotal, vip);
+  -        repository.save(orderId, finalPrice);
+  +        repository.save(orderId.strip(), finalPrice);
+           return finalPrice;
+       }
+   }
+
+▶ [kb5-sau] Chạy riêng TC28 sau khi sửa
+  $ mvn clean test -Dtest=CheckoutApplicationServiceJUnitTest#savesOrderIdWithoutSurroundingSpaces   (JDK 21.0.10)
+  Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+  BUILD SUCCESS
+  log: target/demo-logs/kb5-sau-081919.log
+
+▶ [kb5-sau] Hồi quy toàn bộ trước khi bàn giao
+  $ mvn clean verify   (JDK 21.0.10)
+  Tests run: 31, Failures: 0, Errors: 0, Skipped: 0
+  All coverage checks have been met.
+  BUILD SUCCESS
+  log: target/demo-logs/kb5-sau-081922.log
