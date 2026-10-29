@@ -25,7 +25,7 @@ public class CheckoutService {
             throw new IllegalArgumentException("Giá trị đơn hàng phải lớn hơn 0");
         }
 
-        BigDecimal discountRate = DISCOUNT_TIERS.lowerEntry(subtotal).getValue();
+        BigDecimal discountRate = DISCOUNT_TIERS.floorEntry(subtotal).getValue();
         if (vip) {
             discountRate = discountRate.add(VIP_BONUS);
         }
