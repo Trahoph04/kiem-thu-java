@@ -50,6 +50,7 @@ mkdir -p target/smoke && javac -encoding UTF-8 -d target/smoke src/main/java/btp
 | [docs/kich-ban-bao-tri.md](docs/kich-ban-bao-tri.md) | Chuỗi kịch bản KB1–KB5 theo 4 loại bảo trì |
 | [docs/huong-dan-demo.md](docs/huong-dan-demo.md) | Kịch bản demo khi thuyết trình |
 | `demo-output/` | Log gốc của các lần chạy |
+| `deliverables/BaoCao_BaiTapNhom1_CongCuHoTroKiemThu.docx` | Báo cáo Word (bản nháp; chỗ tô vàng là thông tin nhóm cần điền) |
 
 ## Các mốc trong git
 

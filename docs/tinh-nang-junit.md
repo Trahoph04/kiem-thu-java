@@ -8,7 +8,7 @@ JUnit gồm 3 phần:
 
 - **JUnit Platform** là nền tảng để công cụ build (Maven Surefire), IDE và Console Launcher phát hiện và chạy test. Nền tảng này không phụ thuộc vào cách viết test.
 - **JUnit Jupiter** là mô hình lập trình (các annotation `@Test`, `@ParameterizedTest`, `@Nested`, …) cùng engine để chạy chúng.
-- **JUnit Vintage** cho phép chạy test JUnit 3/4 cũ trên cùng nền tảng. Phần này hữu ích khi bảo trì hệ thống cũ có test viết theo nhiều thế hệ.
+- **JUnit Vintage** cho phép chạy test JUnit 3/4 cũ trên cùng nền tảng. Phần này hữu ích khi chuyển đổi dần bộ test của hệ thống cũ. Ở JUnit 6, engine này đã bị đánh dấu *deprecated*, tức chỉ nên dùng tạm trong lúc chuyển đổi.
 
 Nhờ cách chia tách này, cùng một bộ test chạy được bằng `mvn test`, trong IDE, hoặc bằng Console Launcher (`demo/cay-ket-qua.sh`). Spock cũng chỉ là một engine khác chạy trên JUnit Platform, nên hai công cụ dùng chung hạ tầng.
 
