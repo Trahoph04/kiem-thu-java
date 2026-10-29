@@ -20,7 +20,7 @@ public class CheckoutApplicationService {
             throw new IllegalArgumentException("Mã đơn hàng không được để trống");
         }
         BigDecimal finalPrice = checkoutService.finalPrice(subtotal, vip);
-        repository.save(orderId, finalPrice);
+        repository.save(orderId.strip(), finalPrice);
         return finalPrice;
     }
 }
