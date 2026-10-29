@@ -9,6 +9,11 @@ public class CheckoutService {
     private static final BigDecimal ONE_MILLION = new BigDecimal("1000000");
 
     public BigDecimal finalPrice(BigDecimal subtotal) {
+        return finalPrice(subtotal, false);
+    }
+
+    /** Khách VIP được giảm thêm 2 điểm phần trăm so với bậc thường. */
+    public BigDecimal finalPrice(BigDecimal subtotal, boolean vip) {
         if (subtotal == null || subtotal.signum() <= 0) {
             throw new IllegalArgumentException("Giá trị đơn hàng phải lớn hơn 0");
         }

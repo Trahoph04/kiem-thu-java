@@ -53,6 +53,16 @@ class CheckoutApplicationServiceJUnitTest {
     }
 
     @Test
+    @Tag("vip")
+    @DisplayName("TC27: lưu đơn VIP ORD-VIP với tổng tiền 880.000 đ")
+    void savesVipOrderWithVipPrice() {
+        BigDecimal total = application.checkout("ORD-VIP", new BigDecimal("1000000"), true);
+
+        assertEquals(new BigDecimal("880000"), total);
+        verify(repository).save("ORD-VIP", new BigDecimal("880000"));
+    }
+
+    @Test
     @DisplayName("TC16: từ chối giá 0 đ, không lưu đơn")
     void rejectsInvalidSubtotalWithoutSaving() {
         assertThrows(IllegalArgumentException.class,

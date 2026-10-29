@@ -45,6 +45,24 @@ class CheckoutServiceJUnitTest {
     }
 
     @Nested
+    @Tag("vip")
+    @DisplayName("KB3 – khách VIP giảm thêm 2%")
+    class VipCustomer {
+        @ParameterizedTest(name = "{0}: VIP {1} đ → {2} đ", quoteTextArguments = false)
+        @DisplayName("TC17–TC25: dữ liệu từ bang-gia-vip.csv")
+        @CsvFileSource(resources = "/bang-gia-vip.csv", numLinesToSkip = 1)
+        void calculatesVipPrice(String id, BigDecimal subtotal, BigDecimal expected) {
+            assertEquals(expected, service.finalPrice(subtotal, true), id + ": sai thành tiền VIP");
+        }
+
+        @Test
+        @DisplayName("TC26: VIP vẫn từ chối giá 0 đ")
+        void rejectsInvalidVipSubtotal() {
+            assertThrows(IllegalArgumentException.class, () -> service.finalPrice(BigDecimal.ZERO, true));
+        }
+    }
+
+    @Nested
     @Tag("hieu-nang")
     @DisplayName("Hiệu năng")
     class Performance {

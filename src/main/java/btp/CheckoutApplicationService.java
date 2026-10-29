@@ -12,6 +12,10 @@ public class CheckoutApplicationService {
     }
 
     public BigDecimal checkout(String orderId, BigDecimal subtotal) {
+        return checkout(orderId, subtotal, false);
+    }
+
+    public BigDecimal checkout(String orderId, BigDecimal subtotal, boolean vip) {
         if (orderId == null || orderId.isBlank()) {
             throw new IllegalArgumentException("Mã đơn hàng không được để trống");
         }
