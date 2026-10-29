@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-Code and demo for a CTU software-maintenance group assignment ("Bài tập nhóm số 1", topic *Công cụ hỗ trợ kiểm thử*). The task is to compare at least 3 tools of one category, pick one, and demo its maintenance-supporting features through a chain of scenarios. The group compares **JUnit 5, TestNG and Spock**, all running the same test suite against one small Java 17 checkout module. This repo holds only code, logs and data for the report. The group writes the Word report and slides themselves. User-facing strings, docs and Javadoc are in Vietnamese. Keep new ones in Vietnamese too.
+Code and demo for a CTU software-maintenance group assignment ("Bài tập nhóm số 1", topic *Công cụ hỗ trợ kiểm thử*). The task is to compare at least 3 tools of one category, pick one, and demo its maintenance-supporting features through a chain of scenarios. The group compares **JUnit (6.x, Jupiter API), TestNG and Spock**, all running the same test suite against one small Java 17 checkout module. This repo holds only code, logs and data for the report. The group writes the Word report and slides themselves. User-facing strings, docs and Javadoc are in Vietnamese. Keep new ones in Vietnamese too.
 
 Business rule (VND, `BigDecimal`): below 500,000 there is no discount; from 500,000 the discount is 5%; from 1,000,000 it is 10%. The result is rounded `HALF_UP` to whole đồng (scale 0). A subtotal that is `null` or ≤ 0 throws `IllegalArgumentException`.
 
@@ -15,7 +15,7 @@ Maven comes from Homebrew. The `mvn` wrapper from brew falls back to brew's own 
 ```bash
 export JAVA_HOME=$(/usr/libexec/java_home -v 21)
 
-mvn clean test              # JUnit 5 + Mockito (default profile `junit-mockito`)
+mvn clean test              # JUnit + Mockito (default profile `junit-mockito`)
 mvn -Ptestng clean test     # TestNG + Mockito
 mvn -Pspock clean test      # Spock (Groovy)
 mvn test -Dtest=CheckoutServiceJUnitTest#calculatesFinalPrice   # single test

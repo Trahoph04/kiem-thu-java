@@ -1,6 +1,6 @@
 # Bộ ca kiểm thử chung cho 3 công cụ
 
-JUnit 5, TestNG và Spock cùng thực thi **đúng bộ ca dưới đây** trên cùng mã nguồn (`btp.CheckoutService`, `btp.CheckoutApplicationService`), cùng JDK 21 và Maven. Nhờ vậy, khác biệt trong kết quả so sánh chỉ đến từ công cụ.
+JUnit, TestNG và Spock cùng thực thi **đúng bộ ca dưới đây** trên cùng mã nguồn (`btp.CheckoutService`, `btp.CheckoutApplicationService`), cùng JDK 21 và Maven. Nhờ vậy, khác biệt trong kết quả so sánh chỉ đến từ công cụ.
 
 ## 1. Đặc tả được kiểm thử
 
@@ -43,7 +43,7 @@ Tổng cộng có **16 ca và 18 lần thực thi**, vì TC15 chạy với 3 gi�
 
 ## 4. Vị trí cài đặt trong từng công cụ
 
-| Mã | JUnit 5 (`*JUnitTest.java`) | TestNG (`*TestNgTest.java`) | Spock (`*Spec.groovy`) |
+| Mã | JUnit (`*JUnitTest.java`) | TestNG (`*TestNgTest.java`) | Spock (`*Spec.groovy`) |
 |---|---|---|---|
 | TC01–03 | `CheckoutServiceJUnitTest.rejectsInvalidSubtotal` | `CheckoutServiceTestNgTest.rejectsInvalidSubtotal` | `CheckoutServiceSpec` – "#id: từ chối giá #subtotal" |
 | TC04–13 | `CheckoutServiceJUnitTest.calculatesFinalPrice` | `CheckoutServiceTestNgTest.calculatesFinalPrice` | `CheckoutServiceSpec` – "#id: #subtotal đ → #expected đ" |

@@ -1,6 +1,6 @@
-# So sánh JUnit 5, TestNG và Spock
+# So sánh JUnit, TestNG và Spock
 
-Tài liệu này là dữ liệu cho câu hỏi 2 và 3 trong báo cáo: những công cụ nào phổ biến, và phân tích để đề xuất một công cụ. Mọi số liệu đều đo ngày 26/10/2026 và có thể đo lại bằng `bash demo/do-so-lieu.sh`.
+Tài liệu này là dữ liệu cho câu hỏi 2 và 3 trong báo cáo: những công cụ nào phổ biến, và phân tích để đề xuất một công cụ. Mọi số liệu đều đo ngày 29/10/2026 tại tag `gd1-comparison`, với bản mới nhất của cả 3 công cụ. Có thể đo lại bằng `git checkout gd1-comparison && RUNS=5 bash demo/do-so-lieu.sh`.
 
 ## 1. Điều kiện so sánh
 
@@ -9,8 +9,8 @@ Tài liệu này là dữ liệu cho câu hỏi 2 và 3 trong báo cáo: những
 | Hệ thống được kiểm thử | `CheckoutService`, `CheckoutApplicationService` (giống nhau cho cả 3 công cụ) |
 | Bộ ca kiểm thử | 16 ca, 18 lần thực thi ([test-cases.md](test-cases.md)) |
 | Môi trường | Apple M4, JDK 21.0.10, Maven 3.10.0, Surefire 3.5.2 |
-| JUnit | JUnit Jupiter 5.11.4 và Mockito 5.14.2 (profile `junit-mockito`) |
-| TestNG | TestNG 7.10.2 và Mockito 5.14.2 (profile `testng`) |
+| JUnit | JUnit 6.1.3 (mô hình lập trình Jupiter) và Mockito 5.24.0 (profile `junit-mockito`) |
+| TestNG | TestNG 7.12.0 và Mockito 5.24.0 (profile `testng`) |
 | Spock | Spock 2.5-groovy-5.0 và Groovy 5.1.3, mock có sẵn của Spock (profile `spock`) |
 
 Lệnh chạy là `mvn clean test`, `mvn -Ptestng clean test` và `mvn -Pspock clean test`.
@@ -19,7 +19,7 @@ Lệnh chạy là `mvn clean test`, `mvn -Ptestng clean test` và `mvn -Pspock c
 
 | Công cụ | Code đúng (`main`) | Code có lỗi (nhánh `loi-nguong-500k`) | Log |
 |---|---|---|---|
-| JUnit 5 | 18/18 đạt | 1 ca thất bại (TC07) | `demo-output/01-junit-mockito.log`, `01-loi-junit-mockito.log` |
+| JUnit | 18/18 đạt | 1 ca thất bại (TC07) | `demo-output/01-junit-mockito.log`, `01-loi-junit-mockito.log` |
 | TestNG | 18/18 đạt | 1 ca thất bại (TC07) | `demo-output/01-testng.log`, `01-loi-testng.log` |
 | Spock | 18/18 đạt (Surefire báo **21**) | 1 ca thất bại (TC07) | `demo-output/01-spock.log`, `01-loi-spock.log` |
 
@@ -29,25 +29,25 @@ Lỗi được gây có chủ đích là ở ngưỡng 500.000 đ dùng `>` thay
 
 ## 3. Số liệu đo
 
-| Chỉ số | JUnit 5 + Mockito | TestNG + Mockito | Spock |
+| Chỉ số | JUnit + Mockito | TestNG + Mockito | Spock |
 |---|---|---|---|
 | Dòng mã test (bỏ dòng trống, package, import) | **52** | 67 | 58 |
 | Dòng cấu hình riêng trong `pom.xml` | **14** | 26 | 48 |
 | Plugin build phải thêm | **0** | **0** | 1 (GMavenPlus để biên dịch Groovy) |
-| Thư viện trên test classpath | 12 jar, 7,5 MB | 8 jar, **7,4 MB** | 8 jar, 10,0 MB |
-| Thời gian `mvn clean test`, trung vị 3 lần | **1,79 s** | 1,98 s | 1,90 s |
-| Thời gian riêng phần chạy test, trung vị 3 lần | 0,440 s | 0,556 s | **0,124 s** |
+| Thư viện trên test classpath | 13 jar, 11,7 MB | 8 jar, 11,7 MB | 8 jar, **9,5 MB** |
+| Thời gian `mvn clean test`, trung vị 5 lần | 1,99 s | **1,86 s** | 2,00 s |
+| Thời gian riêng phần chạy test, trung vị 5 lần | 0,403 s | 0,520 s | **0,125 s** |
 
 Cách đọc bảng:
 
-- **Thời gian không phải yếu tố quyết định ở quy mô này.** Toàn bộ quá trình build của 3 công cụ chênh nhau dưới 0,2 s.
-- Spock chạy test nhanh hơn chủ yếu vì **không dùng Mockito**. Ở JUnit, riêng lớp test có mock đã mất 0,439 s, phần lớn là thời gian Mockito tự gắn agent để khởi tạo inline mock maker. Lớp `CheckoutServiceJUnitTest` không dùng mock chỉ mất 0,022 s.
+- **Thời gian không phải yếu tố quyết định ở quy mô này.** Toàn bộ quá trình build của 3 công cụ chênh nhau khoảng 0,15 s, nhỏ hơn mức dao động giữa các lần chạy của cùng một công cụ (JUnit: 1,82–2,40 s).
+- Spock chạy test nhanh hơn chủ yếu vì **không dùng Mockito**. Ở JUnit, riêng lớp test có mock đã mất 0,423 s, phần lớn là thời gian Mockito tự gắn agent để khởi tạo inline mock maker. Lớp `CheckoutServiceJUnitTest` không dùng mock chỉ mất 0,022 s.
 - TestNG dài nhất vì `@DataProvider` trả về `Object[][]` không có kiểu, và phải tự tạo lại mock trong `@BeforeMethod`.
 - Spock tốn nhiều cấu hình nhất vì phải thêm Groovy và plugin biên dịch Groovy.
 
 ## 4. Thông báo lỗi khi gặp cùng một lỗi
 
-**JUnit 5** (Surefire mặc định):
+**JUnit** (Surefire mặc định):
 ```
 CheckoutServiceJUnitTest.calculatesFinalPrice:25 expected: <475000> but was: <500000>
 btp.CheckoutServiceJUnitTest.calculatesFinalPrice(String, BigDecimal, BigDecimal)[4]
@@ -78,7 +78,7 @@ Nhận xét:
 
 ## 5. So sánh tính năng (rút ra khi cài 16 ca)
 
-| Tính năng | JUnit 5 | TestNG | Spock |
+| Tính năng | JUnit | TestNG | Spock |
 |---|---|---|---|
 | Ngôn ngữ viết test | Java | Java | Groovy (phải học thêm) |
 | Tham số hóa | `@ParameterizedTest` + `@CsvSource`, tự chuyển chuỗi sang `BigDecimal` | `@DataProvider` trả `Object[][]`, phải tự chuyển kiểu | Bảng `where:`, đọc như bảng ca kiểm thử |
@@ -99,7 +99,7 @@ Ba dòng cuối của bảng lấy theo tài liệu chính thức của từng c
 | | JUnit | TestNG | Spock | (Mockito) |
 |---|---|---|---|---|
 | Sao GitHub | **7.060** (`junit-team/junit-framework`) | 2.059 (`testng-team/testng`) | 3.630 (`spockframework/spock`) | 15.454 |
-| Bản mới nhất trên Maven Central | 6.1.3 (dòng 5.x dừng ở 5.14.4) | 7.12.0 | 2.5 (10/2026) | 5.24.0 |
+| Bản mới nhất (cũng là bản dùng để so sánh) | 6.1.3 (08/2026); dòng 5.x dừng ở 5.14.4 | 7.12.0 (01/2026) | 2.5 (10/2026) | 5.24.0 (09/2026) |
 | Lần push gần nhất | 26/10/2026 | 26/10/2026 | 21/10/2026 | 24/10/2026 |
 | Giấy phép | EPL-2.0 | Apache-2.0 | Apache-2.0 | MIT |
 
@@ -108,13 +108,13 @@ Một số nguồn tham khảo:
 - Khảo sát JetBrains *State of Developer Ecosystem 2021* (mục Java) ghi rằng *JUnit và Mockito là hai framework kiểm thử đơn vị phổ biến nhất* và mức sử dụng tăng khoảng 2 điểm phần trăm so với năm trước. Trang chỉ có biểu đồ dạng ảnh nên không trích được tỉ lệ chính xác: <https://www.jetbrains.com/lp/devecosystem-2021/java/>
 - Bài báo D. Grabek, J. Gryta, M. Dzieńkowski, "Comparative analysis of Java unit and integration testing tools: JUnit, TestNG and Spock", *IAPGOS* 16(2), 2026, tr. 145–151, DOI 10.35784/iapgos.8302. Tóm tắt của bài kết luận *"không có công cụ nào tối ưu cho mọi trường hợp"*: Spock nổi bật về độ dễ đọc, TestNG về hiệu năng và dễ học, JUnit về hỗ trợ truy cập dữ liệu đa luồng. Nên trích bài này trong báo cáo để phần đề xuất có lập luận hai chiều.
 
-Đáng chú ý: **JUnit 6 đã ra mắt ngày 30/09/2025** và hiện là dòng chính. Dự án đang dùng JUnit 5.11.4 (12/2024), trong khi Spock dùng bản mới nhất. Xem mục 8.
+Đáng chú ý: **JUnit 6 ra mắt ngày 30/09/2025** và hiện là dòng chính. JUnit 6 vẫn dùng mô hình lập trình Jupiter của JUnit 5 (cùng các annotation `@Test`, `@ParameterizedTest`, …), nhưng yêu cầu Java 17 trở lên. Lúc đầu dự án dùng JUnit 5.11.4 và TestNG 7.10.2. Để so sánh công bằng, cả 3 công cụ đã được nâng lên bản mới nhất. Bộ test không phải sửa dòng nào và vẫn đạt 18/18.
 
 ## 7. Bảng điểm có trọng số (bối cảnh: đội bảo trì một hệ thống Java)
 
 Thang điểm 1–5. Điểm tổng = Σ(trọng số × điểm) / 5, tối đa 100.
 
-| Tiêu chí | Trọng số | JUnit 5 | TestNG | Spock | Căn cứ |
+| Tiêu chí | Trọng số | JUnit | TestNG | Spock | Căn cứ |
 |---|---|---|---|---|---|
 | Phổ biến, cộng đồng, tài liệu | 20 | 5 | 3 | 3 | Mục 6: số sao GitHub, khảo sát JetBrains |
 | Tích hợp hệ sinh thái Java (IDE, build, CI, mock, đo độ phủ) | 20 | 5 | 4 | 3 | Mục 3: không cần plugin; Spock cần Groovy và GMavenPlus |

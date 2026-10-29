@@ -4,14 +4,13 @@
 [INFO] Building kiem-thu-java 1.0-SNAPSHOT
 [INFO]   from pom.xml
 [INFO] --------------------------------[ jar ]---------------------------------
-[INFO] Loaded 24244 auto-discovered prefixes for remote repository central (prefixes-central.txt)
-[WARNING] Could not transfer metadata /.meta/prefixes.txt from/to apache.snapshots (https://repository.apache.org/snapshots): Connect to repository.apache.org:443 [repository.apache.org/37.27.138.133] failed: Connect timed out
+[INFO] Loaded 24281 auto-discovered prefixes for remote repository central (prefixes-central.txt)
 [INFO] 
 [INFO] --- clean:3.5.0:clean (default-clean) @ kiem-thu-java ---
 [INFO] Deleting /Users/trahoph/Documents/kiem-thu-java/target
 [INFO] 
 [INFO] --- gplus:5.1.0:addTestSources (default) @ kiem-thu-java ---
-[INFO] Loaded 24244 auto-discovered prefixes for remote repository maven_central (prefixes-maven_central.txt)
+[INFO] Loaded 24281 auto-discovered prefixes for remote repository maven_central (prefixes-maven_central.txt)
 [INFO] 
 [INFO] --- resources:3.5.0:resources (default-resources) @ kiem-thu-java ---
 [INFO] skip non existing resourceDirectory /Users/trahoph/Documents/kiem-thu-java/src/main/resources
@@ -41,10 +40,10 @@
 [INFO]  T E S T S
 [INFO] -------------------------------------------------------
 [INFO] Running btp.CheckoutApplicationServiceSpec
-[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.129 s -- in btp.CheckoutApplicationServiceSpec
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.121 s -- in btp.CheckoutApplicationServiceSpec
 [INFO] Running btp.CheckoutServiceSpec
-[ERROR] Tests run: 15, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.106 s <<< FAILURE! -- in btp.CheckoutServiceSpec
-[ERROR] btp.CheckoutServiceSpec.TC07: 500000 đ → 475000 đ -- Time elapsed: 0.093 s <<< FAILURE!
+[ERROR] Tests run: 15, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.104 s <<< FAILURE! -- in btp.CheckoutServiceSpec
+[ERROR] btp.CheckoutServiceSpec.TC07: 500000 đ → 475000 đ -- Time elapsed: 0.090 s <<< FAILURE!
 Condition not satisfied:
 
 service.finalPrice(subtotal as BigDecimal) == expected
@@ -71,8 +70,8 @@ service.finalPrice(subtotal as BigDecimal) == expected
 [INFO] ------------------------------------------------------------------------
 [ERROR] BUILD FAILURE
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time:  31.612 s
-[INFO] Finished at: 2026-10-26T15:17:29+07:00
+[INFO] Total time:  1.449 s
+[INFO] Finished at: 2026-10-29T07:56:14+07:00
 [INFO] ------------------------------------------------------------------------
 [ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.5.2:test (default-test) on project kiem-thu-java: There are test failures.
 [ERROR] 
