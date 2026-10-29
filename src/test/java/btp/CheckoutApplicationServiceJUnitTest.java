@@ -36,7 +36,7 @@ class CheckoutApplicationServiceJUnitTest {
         assertAll(
             () -> assertEquals(new BigDecimal("900000"), total),
             () -> assertEquals(total, savedPrice.getValue(), "Giá lưu phải bằng giá trả về"),
-            () -> verify(checkoutService).finalPrice(new BigDecimal("1000000"))
+            () -> verify(checkoutService).finalPrice(new BigDecimal("1000000"), false)
         );
         verifyNoMoreInteractions(repository);
     }

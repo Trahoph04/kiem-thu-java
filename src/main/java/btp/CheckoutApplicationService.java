@@ -19,7 +19,7 @@ public class CheckoutApplicationService {
         if (orderId == null || orderId.isBlank()) {
             throw new IllegalArgumentException("Mã đơn hàng không được để trống");
         }
-        BigDecimal finalPrice = checkoutService.finalPrice(subtotal);
+        BigDecimal finalPrice = checkoutService.finalPrice(subtotal, vip);
         repository.save(orderId, finalPrice);
         return finalPrice;
     }

@@ -1,0 +1,120 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ----------------------< vn.ctu.btp:kiem-thu-java >----------------------
+[INFO] Building kiem-thu-java 1.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] Loaded 24281 auto-discovered prefixes for remote repository central (prefixes-central.txt)
+[INFO] 
+[INFO] --- clean:3.5.0:clean (default-clean) @ kiem-thu-java ---
+[INFO] Deleting /Users/trahoph/Documents/kiem-thu-java/target
+[INFO] 
+[INFO] --- dependency:3.8.1:properties (default) @ kiem-thu-java ---
+[INFO] 
+[INFO] --- jacoco:0.8.16:prepare-agent (prepare-agent) @ kiem-thu-java ---
+[INFO] argLine set to -javaagent:/Users/trahoph/.m2/repository/org/jacoco/org.jacoco.agent/0.8.16/org.jacoco.agent-0.8.16-runtime.jar=destfile=/Users/trahoph/Documents/kiem-thu-java/target/jacoco.exec,excludes=btp/SmokeCheck.class
+[INFO] 
+[INFO] --- resources:3.5.0:resources (default-resources) @ kiem-thu-java ---
+[INFO] skip non existing resourceDirectory /Users/trahoph/Documents/kiem-thu-java/src/main/resources
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ kiem-thu-java ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 4 source files with javac [debug release 17] to target/classes
+[INFO] 
+[INFO] --- resources:3.5.0:testResources (default-testResources) @ kiem-thu-java ---
+[INFO] Copying 2 resources from src/test/resources to target/test-classes
+[INFO] 
+[INFO] --- compiler:3.13.0:testCompile (default-testCompile) @ kiem-thu-java ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 2 source files with javac [debug release 17] to target/test-classes
+[INFO] 
+[INFO] --- surefire:3.5.2:test (default-test) @ kiem-thu-java ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running CheckoutApplicationService – thanh toán và lưu đơn
+Java HotSpot(TM) 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+[ERROR] Tests run: 6, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.392 s <<< FAILURE! -- in CheckoutApplicationService – thanh toán và lưu đơn
+[ERROR] btp.CheckoutApplicationServiceJUnitTest.savesOrderWithFinalPrice -- Time elapsed: 0.012 s <<< FAILURE!
+org.opentest4j.MultipleFailuresError: 
+Multiple Failures (1 failure)
+	org.mockito.exceptions.verification.opentest4j.ArgumentsAreDifferent: 
+Argument(s) are different! Wanted:
+checkoutService.finalPrice(1000000);
+-> at btp.CheckoutService.finalPrice(CheckoutService.java:13)
+Actual invocations have different arguments:
+checkoutService.finalPrice(1000000, false);
+-> at btp.CheckoutApplicationService.checkout(CheckoutApplicationService.java:22)
+
+	at org.junit.jupiter.api.AssertAll.assertAll(AssertAll.java:80)
+	at org.junit.jupiter.api.AssertAll.assertAll(AssertAll.java:44)
+	at org.junit.jupiter.api.AssertAll.assertAll(AssertAll.java:38)
+	at org.junit.jupiter.api.Assertions.assertAll(Assertions.java:3048)
+	at btp.CheckoutApplicationServiceJUnitTest.savesOrderWithFinalPrice(CheckoutApplicationServiceJUnitTest.java:36)
+	Suppressed: Argument(s) are different! Wanted:
+checkoutService.finalPrice(1000000);
+-> at btp.CheckoutService.finalPrice(CheckoutService.java:13)
+Actual invocations have different arguments:
+checkoutService.finalPrice(1000000, false);
+-> at btp.CheckoutApplicationService.checkout(CheckoutApplicationService.java:22)
+
+		at btp.CheckoutService.finalPrice(CheckoutService.java:13)
+		at btp.CheckoutApplicationServiceJUnitTest.lambda$savesOrderWithFinalPrice$2(CheckoutApplicationServiceJUnitTest.java:39)
+		at org.junit.jupiter.api.AssertAll.lambda$assertAll$0(AssertAll.java:68)
+		at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+		at java.base/java.util.Spliterators$ArraySpliterator.forEachRemaining(Spliterators.java:1024)
+		at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
+		at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+		at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:575)
+		at java.base/java.util.stream.AbstractPipeline.evaluateToArrayNode(AbstractPipeline.java:260)
+		at java.base/java.util.stream.ReferencePipeline.toArray(ReferencePipeline.java:616)
+		at java.base/java.util.stream.ReferencePipeline.toArray(ReferencePipeline.java:622)
+		at java.base/java.util.stream.ReferencePipeline.toList(ReferencePipeline.java:627)
+		at org.junit.jupiter.api.AssertAll.assertAll(AssertAll.java:77)
+		... 4 more
+
+[INFO] Running CheckoutService – tính giá thanh toán
+[INFO] Running CheckoutService – tính giá thanh toán KB3 – khách VIP giảm thêm 2%
+[INFO] Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.027 s -- in CheckoutService – tính giá thanh toán KB3 – khách VIP giảm thêm 2%
+[INFO] Running CheckoutService – tính giá thanh toán V1–V3 – bậc giảm giá và làm tròn
+[INFO] Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.009 s -- in CheckoutService – tính giá thanh toán V1–V3 – bậc giảm giá và làm tròn
+[INFO] Running CheckoutService – tính giá thanh toán Hiệu năng
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.048 s -- in CheckoutService – tính giá thanh toán Hiệu năng
+[INFO] Running CheckoutService – tính giá thanh toán V0 – giá không hợp lệ
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.004 s -- in CheckoutService – tính giá thanh toán V0 – giá không hợp lệ
+[INFO] Tests run: 0, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.092 s -- in CheckoutService – tính giá thanh toán
+[INFO] 
+[INFO] Results:
+[INFO] 
+[ERROR] Failures: 
+[ERROR]   CheckoutApplicationServiceJUnitTest.savesOrderWithFinalPrice:36 Multiple Failures (1 failure)
+	org.mockito.exceptions.verification.opentest4j.ArgumentsAreDifferent: 
+Argument(s) are different! Wanted:
+checkoutService.finalPrice(1000000);
+-> at btp.CheckoutService.finalPrice(CheckoutService.java:13)
+Actual invocations have different arguments:
+checkoutService.finalPrice(1000000, false);
+-> at btp.CheckoutApplicationService.checkout(CheckoutApplicationService.java:22)
+
+[INFO] 
+[ERROR] Tests run: 30, Failures: 1, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[ERROR] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  1.716 s
+[INFO] Finished at: 2026-10-29T08:10:44+07:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.5.2:test (default-test) on project kiem-thu-java: There are test failures.
+[ERROR] 
+[ERROR] See /Users/trahoph/Documents/kiem-thu-java/target/surefire-reports for the individual test results.
+[ERROR] See dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

@@ -7,6 +7,7 @@ import java.math.RoundingMode;
 public class CheckoutService {
     private static final BigDecimal FIVE_HUNDRED_THOUSAND = new BigDecimal("500000");
     private static final BigDecimal ONE_MILLION = new BigDecimal("1000000");
+    private static final BigDecimal VIP_BONUS = new BigDecimal("0.02");
 
     public BigDecimal finalPrice(BigDecimal subtotal) {
         return finalPrice(subtotal, false);
@@ -23,6 +24,9 @@ public class CheckoutService {
             discountRate = new BigDecimal("0.10");
         } else if (subtotal.compareTo(FIVE_HUNDRED_THOUSAND) >= 0) {
             discountRate = new BigDecimal("0.05");
+        }
+        if (vip) {
+            discountRate = discountRate.add(VIP_BONUS);
         }
 
         return subtotal.multiply(BigDecimal.ONE.subtract(discountRate))
