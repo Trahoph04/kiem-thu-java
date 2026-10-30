@@ -30,13 +30,16 @@ chay_tai() {
     local log=$LOG_DIR/$tag-$(date +%H%M%S).log
     printf '\n%s▶ [%s] %s%s\n' "$DAM" "$tag" "$mo_ta" "$HET"
     printf '%s  $ mvn %s   (JDK %s)%s\n' "$MO" "$*" "$("$jdk/bin/java" -version 2>&1 | head -1 | cut -d'"' -f2)" "$HET"
+    local bd kt
+    bd=$(perl -MTime::HiRes=time -e 'printf "%.2f", time')
     (cd "$dir" && JAVA_HOME=$jdk mvn -o -B "$@" > "$OLDPWD/$log" 2>&1)
-    tom_tat "$log"
+    kt=$(perl -MTime::HiRes=time -e 'printf "%.2f", time')
+    tom_tat "$log" "$(awk -v a="$bd" -v b="$kt" 'BEGIN { s = sprintf("%.1f", b - a); sub(/\./, ",", s); print s }')"
     LAST_DIR=$dir
 }
 
 tom_tat() {
-    local log=$1
+    local log=$1 thoi_gian=${2:+  (${2} s)}
     grep -E 'Tests run: [0-9]+, Failures: [0-9]+, Errors: [0-9]+, Skipped: [0-9]+$' "$log" | tail -1 | sed 's/^\[[A-Z]*\]/ /'
     # Mục Failures/Errors cuối log Surefire: mỗi ca đỏ một dòng (assertAll in thông điệp ở dòng kế tiếp)
     sed -En '/^\[ERROR\] (Failures|Errors): *$/,/^\[ERROR\] Tests run:/p' "$log" \
@@ -46,7 +49,7 @@ tom_tat() {
         | awk '!seen[$0]++' | head -14
     grep -m1 -A5 'Argument(s) are different' "$log" | grep -v '^-> at' | sed 's/^/    /'
     grep -E 'Rule violated|All coverage checks' "$log" | sed -E 's/^\[[A-Z]+\] /  /'
-    if grep -q 'BUILD SUCCESS' "$log"; then echo "  ${XANH}BUILD SUCCESS${HET}"; else echo "  ${DO}BUILD FAILURE${HET}"; fi
+    if grep -q 'BUILD SUCCESS' "$log"; then echo "  ${XANH}BUILD SUCCESS${HET}${thoi_gian}"; else echo "  ${DO}BUILD FAILURE${HET}${thoi_gian}"; fi
     printf '%s  log: %s%s\n' "$MO" "$log" "$HET"
 }
 

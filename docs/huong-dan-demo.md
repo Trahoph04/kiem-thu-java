@@ -1,5 +1,7 @@
 # Hướng dẫn demo khi thuyết trình (khoảng 12 phút)
 
+> Khi quay video, dùng [kich-ban-video.md](kich-ban-video.md) và `bash demo/video.sh`. Bản đó có phần so sánh chạy trực tiếp: bảng kết quả từng ca, tự gây lỗi, đo số liệu và kết luận.
+
 Máy demo: macOS, JDK 21, Maven từ Homebrew. Mọi lệnh chạy từ thư mục gốc dự án và dùng `-o` (offline), nên không cần mạng.
 
 ## Chuẩn bị trước giờ trình bày

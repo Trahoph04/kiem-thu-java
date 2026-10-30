@@ -32,6 +32,7 @@ mvn -Pspock clean test      # Spock (bộ so sánh)
 mvn test -Dgroups=luu-don   # chạy chọn lọc theo @Tag: tinh-gia, luu-don, vip, hieu-nang
 mvn test -Dtest='CheckoutApplicationServiceJUnitTest#savesOrderIdWithoutSurroundingSpaces'
 
+bash demo/so-sanh-truc-tiep.sh   # chạy bộ ca chung trên 3 công cụ, in bảng kết quả từng ca
 bash demo/cay-ket-qua.sh    # kết quả JUnit dạng cây
 bash demo/kich-ban.sh       # chạy lại chuỗi kịch bản KB1–KB5
 bash demo/do-so-lieu.sh     # đo lại số liệu so sánh (nên chạy ở tag gd1-comparison)
