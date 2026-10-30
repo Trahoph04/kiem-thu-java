@@ -25,6 +25,7 @@ bash demo/do-so-lieu.sh     # re-measure comparison metrics -> demo-output/01-so
 bash demo/cay-ket-qua.sh    # JUnit results as a tree via Console Launcher (args pass through, e.g. --include-tag luu-don)
 mvn test -Dgroups=luu-don   # JUnit tags: tinh-gia, luu-don, vip, hieu-nang
 bash demo/kich-ban.sh kb3    # replay maintenance scenario(s) kb1..kb5|tat-ca in temp git worktrees
+bash demo/video.sh [N]      # scene-by-scene demo for video recording, pauses before each command (TU_DONG=1 = no pauses)
 
 # Dependency-free smoke check
 mkdir -p target/smoke && javac -encoding UTF-8 -d target/smoke src/main/java/btp/*.java && java -cp target/smoke btp.SmokeCheck
@@ -64,4 +65,5 @@ Follow the naming convention and new test files need no POM edits. A file that m
 - Branch `loi-nguong-500k` contains a **deliberate** bug (`>` instead of `>=` at 500,000) for demoing failure messages. Never merge it into `main`.
 - Git tags mark the phases (`gd0-baseline`, `gd1-comparison`, `gd2-features`) and maintenance scenarios KB1–KB5 (`kbN-truoc` / `kbN-sau`, plus `kb4-loi`), documented in `docs/kich-ban-bao-tri.md`. Some tagged commits on `main` are **intentionally red** (`kb3-truoc`, `kb4-loi`, `kb5-truoc`). `demo/kich-ban.sh` depends on these tags, so don't move or delete them.
 - The coverage gate fails `mvn verify` whenever a `-Dtest=` subset is run, so use `mvn test -Dtest=…` for single tests.
+- Scripts run under macOS's bash 3.2: no bash-4 features (`${x^^}`, associative arrays, `mapfile`).
 - `.github/modernize/` is VS Code Java-upgrade extension residue. `.idea` says JDK 1.8 but the POM requires release 17.
